@@ -16,3 +16,9 @@ To generate a build ready for production:
     npm run build
 
 Then deploy the contents of the `dist` directory to your server.
+
+# IntelliBus
+
+* Builds are done through WSL
+* To access the local device file directory: `cd /mnt/c/Users/...`
+* run `npm run tailwind:css` to generate necessary files
