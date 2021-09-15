@@ -19,6 +19,9 @@ import {defaults as defaultInteractions} from 'ol/interaction';
 import {click} from 'ol/events/condition';
 import {Circle as CircleGeom, Point} from 'ol/geom';
 
+import coords from '/assets/routeInfo/bus_stop.json';
+
+console.log("yuh" + coords);
 const view = new View({
   center: fromLonLat([-84.39, 33.77]),
   zoom: 15
@@ -33,3 +36,16 @@ const map = new Map({
   ],
   view: view
 });
+
+// fetch the json files
+  fetch('http://localhost:3000/geoJson/tech.geojson', {mode: 'cors'})
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(json) {
+    // Read features, clear the current layer features
+    const format = new GeoJSON();
+    const features = format.readFeatures(json);
+    console.log(features);
+  });
+  map.render();
