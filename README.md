@@ -19,6 +19,16 @@ Then deploy the contents of the `dist` directory to your server.
 
 # IntelliBus
 
+## Dependencies
+* PostHtml
+* PostCSS
+* TailwindCSS
+* Parcel
+* Node modules
+
+## Getting Started
+* Run `npm install`
+
 * Builds are done through WSL
 * To access the local device file directory: `cd /mnt/c/Users/...`
-* run `npm run tailwind:css` to generate necessary files
+* run `npm run tailwind:css` to generate necessary files on first device setup
