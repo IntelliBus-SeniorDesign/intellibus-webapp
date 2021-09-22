@@ -18,12 +18,23 @@ import { defaults, isEmpty } from 'lodash';
 import {defaults as defaultInteractions} from 'ol/interaction';
 import {click} from 'ol/events/condition';
 import {Circle as CircleGeom, Point} from 'ol/geom';
+import CircleStyle from 'ol/style/Circle';
 
+/////////
+/// Initialize Globals
+/////////
 const view = new View({
   center: fromLonLat([-84.39, 33.77]),
   zoom: 15
 });
+const BustStopSource = new VectorSource();
+const selectClick = new Select({
+  condition: click,
+});
 
+/////////
+/// Initialize OpenLayers Map
+/////////
 const map = new Map({
   target: 'map',
   layers: [
@@ -33,3 +44,104 @@ const map = new Map({
   ],
   view: view
 });
+map.addLayer(new VectorLayer({source: BustStopSource}));
+
+/////////
+/// Enable Map Interactions
+/////////
+map.addInteraction(selectClick);
+selectClick.on('select', function(e) {
+  var selectedFeatures = e.target.getFeatures();
+
+  if (selectedFeatures.getLength() == 0){
+    console.log("none");
+  }
+  else {
+    selectedFeatures.forEach(function(feature) {
+      var props = feature.getProperties();
+      console.log("====");
+      console.log(props);
+      console.log(feature);
+      // var model = feature.getProperties()["model"];
+      // // Make sure our selected feature is an icon
+      // if (model) {
+      //   document.getElementById("info").style.visibility = 'visible';
+
+      //   // populate html fields
+      //   var properties = feature.getProperties();
+
+      //   console.log(properties);
+      //   for (var key in properties) {
+      //     let element = document.getElementById(key);
+      //     if (element)
+      //       document.getElementById(key).innerHTML = key + " : " + (properties[key] ? properties[key] : "N/A");
+      //   }
+      //   // populate the coordinates
+      //   let element = document.getElementById('loc');
+      //   let loc = toLonLat(feature.getGeometry().getCoordinates());
+      //   document.getElementById('loc').innerHTML = toStringHDMS(loc, 1);
+
+      //   // move the selection to the clicked feature
+      //   selectionOverlay.setGeometry(properties["geometry"]);
+      //   selectionOverlay.setStyle(selectionOverlayStyle);
+      // }
+    });
+  }
+});
+map.on('pointermove', function(e) {
+  if (!e.dragging){
+    var pixel = map.getEventPixel(e.originalEvent);
+    map.getTargetElement().style.cursor = map.hasFeatureAtPixel(pixel) ? 'pointer': '';
+  }
+});
+
+document.getElementById('fetch').onclick = fetchData;
+
+
+
+function fetchData() {
+  fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/routesandstops', {mode: 'cors'})
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(json){
+    console.log(json.body);
+    //const format = new GeoJSON();
+    //const features = format.readFeatures(json);
+    // retrieve the type of the GeoJSON geometry
+    json.body.forEach(function(feature){
+      // Pull properties from the bus stop feature
+      let stopID = feature["id"];
+      let stopName = feature["name"];
+      let routeName = feature["routeName"];
+      let position = feature["position"];
+
+      let coord = [feature["longitude"], feature["latitude"]];
+
+      let stopFeature = new Feature({
+        geometry: new Point(coord),
+      });
+      stopFeature.setStyle(new Style({ 
+        image: new CircleStyle({
+          radius: 5,
+          fill: new Fill({ color: '#ff0000'}),
+          stroke: new Stroke({ color: "#0"})
+        })}));
+      stopFeature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+
+      // console.log(toStringXY(coord, 5));
+
+      // add properties to the feature
+      stopFeature.setProperties({"id": stopID || '',
+        "stopName": stopName || '',
+        "routeName": routeName || '',
+        "position": position || '',
+      });
+
+      // Add the feature to our vector layer
+      BustStopSource.addFeature(stopFeature);
+    });
+
+    // cluster features together to group overlapping bus stops from multiple routes
+  })
+}
