@@ -32,6 +32,19 @@ const BusStopSource = new VectorSource();
 const selectClick = new Select({
   condition: click,
 });
+const RouteColors = {
+  'Blue':             '#0000ff',
+  'Charter':          '#003300',
+  'Emory-GT':         '#ff66ff',
+  'Gold':             '#FFD700',
+  'Green':            '#32a852',
+  'Grocery':          '#6600cc',
+  'Midnight Rambler': '#003300',
+  'NARA-TEP':         '#66ccff',
+  'Red':              '#ff0000',
+  'Tech Square':      '#996633',
+}
+
 // Popup elements
 const container = document.getElementById('popup');
 const content = document.getElementById('popup-content');
@@ -161,8 +174,8 @@ function fetchBusStops() {
       });
       stopFeature.setStyle(new Style({ 
         image: new CircleStyle({
-          radius: 5,
-          fill: new Fill({ color: '#ff0000'}),
+          radius: 8,
+          fill: new Fill({ color: RouteColors[routeName]}),
           stroke: new Stroke({ color: "#0"})
         })}));
       stopFeature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
