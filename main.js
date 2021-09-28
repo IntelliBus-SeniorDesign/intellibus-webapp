@@ -18,50 +18,88 @@ import { defaults, isEmpty } from 'lodash';
 import {defaults as defaultInteractions} from 'ol/interaction';
 import {click} from 'ol/events/condition';
 import {Circle as CircleGeom, Point} from 'ol/geom';
+import Overlay from 'ol/Overlay';
 import CircleStyle from 'ol/style/Circle';
 
-/////////
-/// Initialize Globals
-/////////
+/**
+ * Initialize Globals
+ */
 const view = new View({
   center: fromLonLat([-84.39, 33.77]),
   zoom: 15
 });
-const BustStopSource = new VectorSource();
+const BusStopSource = new VectorSource();
 const selectClick = new Select({
   condition: click,
 });
+// Popup elements
+const container = document.getElementById('popup');
+const content = document.getElementById('popup-content');
+const header = document.getElementById('popup-header');
+const closer = document.getElementById('popup-closer');
 
-/////////
-/// Initialize OpenLayers Map
-/////////
-const map = new Map({
+/**
+ * Create an overlay to anchor the popup to the map.
+ */
+ const overlay = new Overlay({
+  element: container,
+  autoPan: true,
+  autoPanAnimation: {
+    duration: 250,
+  },
+});
+
+/**
+ * Add a click handler to hide the popup.
+ * @return {boolean} Don't follow the href.
+ */
+ closer.onclick = function () {
+  overlay.setPosition(undefined);
+  closer.blur();
+  return false;
+};
+
+/**
+ * Initialize OpenLayers Map
+ */
+ const map = new Map({
   target: 'map',
   layers: [
     new TileLayer({
       source: new OSM()
     })
   ],
-  view: view
+  view: view,
+  overlays: [overlay]
 });
-map.addLayer(new VectorLayer({source: BustStopSource}));
+map.addLayer(new VectorLayer({source: BusStopSource}));
 
-/////////
-/// Enable Map Interactions
-/////////
+/**
+ * Enable map interactions for features (bus stops, routes, etc.)
+ */
 map.addInteraction(selectClick);
 selectClick.on('select', function(e) {
-  var selectedFeatures = e.target.getFeatures();
+  let selectedFeatures = e.target.getFeatures();
 
+  // Close the Overlay if no feature is selected
   if (selectedFeatures.getLength() == 0){
-    console.log("none");
+    overlay.setPosition(undefined);
+    closer.blur();
   }
   else {
     selectedFeatures.forEach(function(feature) {
-      var props = feature.getProperties();
+      let props = feature.getProperties();
       console.log("====");
       console.log(props);
-      console.log(feature);
+
+      // Display the Overlay at the feature location
+      let coordinate = feature.getGeometry().getCoordinates();
+      header.innerHTML = props.stopName;
+      content.innerHTML = 'GT Route: ' + props.routeName + '<br />' +
+                              'Estimated wait time: ' + '<br />' +
+                              'Current Capacity: ';
+      overlay.setPosition(coordinate);
+
       // var model = feature.getProperties()["model"];
       // // Make sure our selected feature is an icon
       // if (model) {
@@ -95,29 +133,29 @@ map.on('pointermove', function(e) {
   }
 });
 
-document.getElementById('fetch').onclick = fetchData;
-
-
-
-function fetchData() {
+/**
+ * Fetch bus-stop data from AWS API endpoint
+ * Display the results and cluster overlapping bus routes
+ */
+function fetchBusStops() {
   fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/routesandstops', {mode: 'cors'})
   .then(function(response) {
     return response.json();
   })
   .then(function(json){
     console.log(json.body);
-    //const format = new GeoJSON();
-    //const features = format.readFeatures(json);
-    // retrieve the type of the GeoJSON geometry
+
+    // Retrieve each feature in the database
     json.body.forEach(function(feature){
       // Pull properties from the bus stop feature
-      let stopID = feature["id"];
-      let stopName = feature["name"];
-      let routeName = feature["routeName"];
-      let position = feature["position"];
+      let stopID = feature.id;
+      let stopName = feature.name;
+      let routeName = feature.routeName;
+      let position = feature.position;
 
-      let coord = [feature["longitude"], feature["latitude"]];
+      let coord = [feature.longitude, feature.latitude];
 
+      // Style the bus stop feature
       let stopFeature = new Feature({
         geometry: new Point(coord),
       });
@@ -139,9 +177,11 @@ function fetchData() {
       });
 
       // Add the feature to our vector layer
-      BustStopSource.addFeature(stopFeature);
+      BusStopSource.addFeature(stopFeature);
     });
 
     // cluster features together to group overlapping bus stops from multiple routes
   })
 }
+
+fetchBusStops();
