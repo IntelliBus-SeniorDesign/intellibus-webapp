@@ -1,5 +1,6 @@
 import {Map, View} from 'ol';
 import MousePosition from 'ol/control/MousePosition';
+import Cluster from 'ol/source/Cluster';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
@@ -44,7 +45,6 @@ const RouteColors = {
   'Red':              '#ff0000',
   'Tech Square':      '#996633',
 }
-
 // Popup elements
 const container = document.getElementById('popup');
 const content = document.getElementById('popup-content');
@@ -193,7 +193,45 @@ function fetchBusStops() {
       BusStopSource.addFeature(stopFeature);
     });
 
-    // cluster features together to group overlapping bus stops from multiple routes
+    // Cluster features together to group overlapping bus stops from multiple routes
+    const clusterSource = new Cluster({
+      distance: 10,
+      source: BusStopSource
+    });
+    const styleCache = {};
+    const clusters = new VectorLayer({
+      source: clusterSource,
+      style: function (feature) {
+        const size = feature.get('features').length;
+        let style = styleCache[size];
+        // if cluster is only one feature, do not show cluster
+        if (size == 1) return null;
+        if (!style) {
+          style = new Style({
+            image: new CircleStyle({
+              radius: 10,
+              stroke: new Stroke({
+                color: '#fff',
+              }),
+              fill: new Fill({
+                color: '#3399CC',
+              }),
+            }),
+            text: new Text({
+              text: size.toString(),
+              fill: new Fill({
+                color: '#fff',
+              }),
+            }),
+          });
+          styleCache[size] = style;
+        }
+        return style;
+      }
+    });
+
+    // Add cluster to map
+    map.addLayer(clusters);
   })
 }
 
