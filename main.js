@@ -11,7 +11,7 @@ import OSM from 'ol/source/OSM';
 import Icon from 'ol/style/Icon';
 import 'ol/ol.css';
 import {FullScreen, ScaleLine, defaults as defaultControls } from 'ol/control';
-import {createStringXY, toStringHDMS} from 'ol/coordinate';
+import {createStringXY, toStringHDMS, add} from 'ol/coordinate';
 import Select, { SelectEvent } from 'ol/interaction/Select';
 import {fromLonLat, toLonLat} from 'ol/proj';
 import LineString from 'ol/geom/LineString';
@@ -30,6 +30,7 @@ const view = new View({
   zoom: 15
 });
 const BusStopSource = new VectorSource();
+const BusSource = new VectorSource();
 const selectClick = new Select({
   condition: click,
 });
@@ -45,6 +46,7 @@ const RouteColors = {
   'Red':              '#ff0000',
   'Tech Square':      '#996633',
 }
+var testBusFeature;
 // Popup elements
 const container = document.getElementById('popup');
 const content = document.getElementById('popup-content');
@@ -86,6 +88,7 @@ const closer = document.getElementById('popup-closer');
   overlays: [overlay]
 });
 map.addLayer(new VectorLayer({source: BusStopSource}));
+map.addLayer(new VectorLayer({source: BusSource}));
 
 /**
  * Enable map interactions for features (bus stops, routes, etc.)
@@ -107,12 +110,22 @@ selectClick.on('select', function(e) {
 
       // Display the Overlay at the feature location
       let coordinate = feature.getGeometry().getCoordinates();
-      header.innerHTML = props.stopName;
-      content.innerHTML = 'GT Route: ' + props.routeName + '<br />' +
-                              'Estimated wait time: ' + '<br />' +
-                              'Current Capacity: ';
+      if (props.entity == 'bus')
+      {
+        header.innerHTML = "TEST BUS1";
+        content.innerHTML = 'GT Route: ' + props.routeName + '<br />' +
+                              'Estimated wait time: ' + props.ETA + '<br />' +
+                              'Current Capacity: ' + props.capacity + '<br />' +
+                              'Next Stop: ' + props.nextStop;
+      }
+      else 
+      {
+        header.innerHTML = props.stopName;
+        content.innerHTML = 'GT Route: ' + props.routeName + '<br />' +
+                                'Estimated wait time: ' + '<br />' +
+                                'Current Capacity: ';
+      } 
       overlay.setPosition(coordinate);
-
       // var model = feature.getProperties()["model"];
       // // Make sure our selected feature is an icon
       // if (model) {
@@ -157,6 +170,37 @@ function fetchBusStops() {
   })
   .then(function(json){
     console.log(json.body);
+
+
+
+    /**
+     * 
+     * CREATE A DUMMY BUS TO MOVE ALONG NORTH AVE
+     * 
+     */
+    let entity = "bus";
+    let routeName = "North Avenue";
+    let nextStop = "Publix";
+    let capacity = "27%";
+    let ETA = "3 min.";
+    let busCoord = [-84.39617872238159, 33.77137077205131];
+    testBusFeature = new Feature({
+      geometry: new Point(busCoord)
+    });
+    testBusFeature.setStyle(new Style({ 
+      image: new CircleStyle({
+        radius: 20,
+        fill: new Fill({ color: 'red'}),
+        stroke: new Stroke({ color: "#0"})
+      })}));
+    testBusFeature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+    testBusFeature.setProperties({"entity": entity,
+      "routeName": routeName || '',
+      "nextStop": nextStop || '',
+      "capacity": capacity || '',
+      "ETA": ETA || '',
+    });
+    BusSource.addFeature(testBusFeature);
 
     // Retrieve each feature in the database
     json.body.forEach(function(feature){
@@ -236,3 +280,14 @@ function fetchBusStops() {
 }
 
 fetchBusStops();
+setInterval(function() {
+  r = testBusFeature.getGeometry().getCoordinates();
+  console.log(r);
+  add(r, [25, 0]);
+
+  testBusFeature.getGeometry().setCoordinates(r);
+    //map1.getView().setCenter(coord);
+  BusSource.refresh();
+  BusSource.addFeature(testBusFeature);
+  if(overlay.getPosition()) overlay.setPosition(r);
+}, 1000)
