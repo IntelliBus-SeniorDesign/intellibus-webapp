@@ -4,14 +4,40 @@
     <meta charset="UTF-8" />
 	  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Using OpenLayers with Parcel</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="public/js/passengers-vs-time.js"></script>
   </head>
   <body>
     <include src="public/layouts/header.html"></include>
 		<div class="pt-4"> <!--Spacer--></div>
-    <div class="flex h-screen w-10/12 m-auto border-2">
-      <h3 class="m-auto text-center">
-        Dashboard goes here
-      </h3>
+    <div class="h-screen w-10/12 m-auto border-2">
+      <!-- Stats -->
+      <div class="grid grid-cols-3 m-auto content-center gap-x-24">
+        <div class="border rounded text-center m-5 h-40 w-72">
+          <div class="m-auto h-40">
+            <h3 class="text-xl font-semibold mt-8">Buses Deployed</h3>
+            <p id="analytics-buses-deployed" name="analytics-buses-deployed" class="text-2xl font-bold mt-6">29</p>
+          </div>
+        </div>
+        <div class="border rounded text-center m-5 h-40 w-72">
+          <div class="m-auto h-40">
+            <h3 class="text-xl font-semibold mt-8">Live Total Passenger Count</h3>
+            <p id="analytics-passenger-count" name="analytics-passenger-count" class="text-2xl font-bold mt-6">618</p>
+          </div>
+        </div>
+        <div class="border rounded text-center m-5 h-40 w-72">
+          <div class="m-auto h-40">
+            <h3 class="text-xl font-semibold mt-8">Average Passengers per Bus</h3>
+            <p id="analytics-average-passengers" name="analytics-average-passengers" class="text-2xl font-bold mt-6">19</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart.js Passengers vs. Time -->
+      <div class="h-4/6 border w-10/12 mx-auto">
+        <canvas id="passengers-vs-time"></canvas>
+      </div>
     </div>
     <include src="public/layouts/footer.html"></include>
 	</body>
