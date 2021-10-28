@@ -71,14 +71,7 @@ window.onload = (event) => {
   ///                           DEFINE Chart-js PARAMS
   ///////////////////////////////////////////////////////////////////////
 
-  const labels = [
-    ['1/18/2021', '08:00'],
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-  ];
+  const labels = [];
 
   // Populate labels, data
   console.log("Populating dataset", mockDataset);
@@ -88,7 +81,8 @@ window.onload = (event) => {
     for (let time of Object.keys(mockDataset[date])) {
 
       // populate 'labels', the axis markers
-      
+      let label = [date, time];
+      labels.push(label);
 
       //push value for each key in dataInputs[]
       for (let dataId of Object.keys(dataInputs)) {
@@ -100,6 +94,9 @@ window.onload = (event) => {
     }
   }
   
+  ///////////////////////////////////////////////////////////////////////
+  ///                           CREATE CHART
+  ///////////////////////////////////////////////////////////////////////
   const data = {
     labels: labels,
     datasets: 
@@ -118,7 +115,25 @@ window.onload = (event) => {
   const config = {
     type: 'line',
     data: data,
-    options: {}
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: 'Passengers vs. Time',
+          padding: 20,
+          font: {
+            size: 24
+          }
+        },
+        legend: {
+          display: true,
+          position: 'right',
+          labels: {
+            padding: 30
+          }
+        }
+      }
+    }
   };
 
   const passengerTimeChart = new Chart(
