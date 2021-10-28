@@ -1,43 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <gpx version="1.1" creator="http://www.geoplaner.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
 <rte>
-<name>GreenRouteSimFile1</name>
+<RouteName>GreenRouteSimFile1</RouteName>
 <rtept lat="33.77836" lon="-84.39956">
-<name>WP01-A</name>
-</rtept>
-<rtept lat="33.77796" lon="-84.40201">
-<name>WP02-B</name>
-</rtept>
-<rtept lat="33.7751" lon="-84.40265">
-<name>WP03-C</name>
-</rtept>
-<rtept lat="33.77335" lon="-84.39917">
-<name>WP04-D</name>
-</rtept>
-<rtept lat="33.78637" lon="-84.40532">
-<name>WP05-E</name>
-</rtept>
-<rtept lat="33.78613" lon="-84.3988">
-<name>WP06-F</name>
-</rtept>
-<rtept lat="33.78628" lon="-84.39559">
-<name>WP07-G</name>
-</rtept>
-<rtept lat="33.78035" lon="-84.39923">
-<name>WP08-H</name>
-</rtept>
-<rtept lat="33.78021" lon="-84.39901">
-<name>WP09-I</name>
-</rtept>
-<rtept lat="33.78162" lon="-84.40408">
-<name>WP10-J</name>
-</rtept>
-<rtept lat="33.78432" lon="-84.40574">
-<name>WP11-K</name>
-</rtept>
-<rtept lat="33.77325" lon="-84.39701">
-<name>WP12-L</name>
-</rtept>
 <rtept lat="33.77329" lon="-84.39716">
 <name>WP13-M</name>
 </rtept>
