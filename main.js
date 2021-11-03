@@ -279,15 +279,75 @@ function fetchBusStops() {
   })
 }
 
-fetchBusStops();
-setInterval(function() {
-  r = testBusFeature.getGeometry().getCoordinates();
-  console.log(r);
-  add(r, [25, 0]);
+function fetchBusTravelData() {
+  fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/fakeroute', {mode: 'cors'})
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(json){
+    console.log('Test Green Route Data', json.body);
 
-  testBusFeature.getGeometry().setCoordinates(r);
-    //map1.getView().setCenter(coord);
-  BusSource.refresh();
-  BusSource.addFeature(testBusFeature);
-  if(overlay.getPosition()) overlay.setPosition(r);
-}, 1000)
+    /**
+     * 
+     * CREATE A DUMMY BUS TO MOVE ALONG NORTH AVE
+     * 
+     */
+     let entity = "bus";
+     let routeName = "North Avenue";
+     let nextStop = "Publix";
+     let capacity = "27%";
+     let ETA = "3 min.";
+     let busCoord = fromLonLat([-84.39617872238159, 33.77137077205131]);
+     testBusFeature = new Feature({
+       geometry: new Point(busCoord)
+     });
+     testBusFeature.setStyle(new Style({ 
+       image: new CircleStyle({
+         radius: 20,
+         fill: new Fill({ color: 'red'}),
+         stroke: new Stroke({ color: "#0"})
+       })}));
+     testBusFeature.setProperties({"entity": entity,
+       "routeName": routeName || '',
+       "nextStop": nextStop || '',
+       "capacity": capacity || '',
+       "ETA": ETA || '',
+     });
+     BusSource.addFeature(testBusFeature);
+     
+    let promise = Promise.resolve();
+    // Handle each green bus route
+    json.body.forEach(function(feature){
+      promise = promise.then(function() {
+        return new Promise(function (resolve) {
+          
+          let routeCoord = fromLonLat([feature.lon, feature.lat]);
+          testBusFeature.getGeometry().setCoordinates(routeCoord);
+          
+
+          setTimeout(resolve, 200);
+        });
+      });
+    });
+
+    promise.then(function() {
+      console.log("loop complete");
+    });
+  })
+}
+
+
+//fetchBusStops();
+fetchBusTravelData();
+
+// setInterval(function() {
+//   r = testBusFeature.getGeometry().getCoordinates();
+//   // console.log(r);
+//   add(r, [25, 0]);
+
+//   testBusFeature.getGeometry().setCoordinates(r);
+//     //map1.getView().setCenter(coord);
+//   BusSource.refresh();
+//   BusSource.addFeature(testBusFeature);
+//   if(overlay.getPosition()) overlay.setPosition(r);
+// }, 1000)

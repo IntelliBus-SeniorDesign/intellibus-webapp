@@ -56,5 +56,63 @@
       "Route3": 6,
       "Route4": 7
     }
+  },
+  "1/19/21":
+  {
+    "08:00":
+    {
+      "Bus1": 0,
+      "Bus2": 1,
+      "Bus3": 2,
+      "Bus4": 3,
+      "Route1": 4,
+      "Route2": 5,
+      "Route3": 6,
+      "Route4": 7
+    },
+    "09:00":
+    {
+      "Bus1": 0,
+      "Bus2": 1,
+      "Bus3": 2,
+      "Bus4": 3,
+      "Route1": 4,
+      "Route2": 5,
+      "Route3": 6,
+      "Route4": 7
+    },
+    "10:00":
+    {
+      "Bus1": 0,
+      "Bus2": 1,
+      "Bus3": 2,
+      "Bus4": 3,
+      "Route1": 4,
+      "Route2": 5,
+      "Route3": 6,
+      "Route4": 7
+    },
+    "11:00":
+    {
+      "Bus1": 0,
+      "Bus2": 1,
+      "Bus3": 2,
+      "Bus4": 3,
+      "Route1": 4,
+      "Route2": 5,
+      "Route3": 6,
+      "Route4": 7
+    },
+    "12:00":
+    {
+      "Bus1": 0,
+      "Bus2": 1,
+      "Bus3": 2,
+      "Bus4": 3,
+      "Route1": 4,
+      "Route2": 5,
+      "Route3": 6,
+      "Route4": 7
+    }
   }
 }
