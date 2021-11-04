@@ -4,7 +4,7 @@ import Cluster from 'ol/source/Cluster';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
-import {Style, Fill, Stroke, Text} from 'ol/style';
+import {Style, Fill, Stroke, Text, Icon} from 'ol/style';
 import Feature from 'ol/Feature';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
@@ -22,6 +22,7 @@ import {Circle as CircleGeom, Point} from 'ol/geom';
 import Overlay from 'ol/Overlay';
 import CircleStyle from 'ol/style/Circle';
 
+import busIcon from 'data-url:./public/assets/images/bus_icon.png';
 /**
  * Initialize Globals
  */
@@ -271,11 +272,9 @@ function fetchBusTravelData() {
        geometry: new Point(busCoord)
      });
      testBusFeature.setStyle(new Style({ 
-       image: new CircleStyle({
-         radius: 20,
-         fill: new Fill({ color: 'red'}),
-         stroke: new Stroke({ color: "#0"})
-       })}));
+       image: new Icon({
+        src: busIcon
+      })}));
      testBusFeature.setProperties({"entity": entity,
        "routeName": routeName || '',
        "nextStop": nextStop || '',
