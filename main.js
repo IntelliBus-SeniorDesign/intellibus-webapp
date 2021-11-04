@@ -171,37 +171,6 @@ function fetchBusStops() {
   .then(function(json){
     console.log(json.body);
 
-
-
-    /**
-     * 
-     * CREATE A DUMMY BUS TO MOVE ALONG NORTH AVE
-     * 
-     */
-    let entity = "bus";
-    let routeName = "North Avenue";
-    let nextStop = "Publix";
-    let capacity = "27%";
-    let ETA = "3 min.";
-    let busCoord = [-84.39617872238159, 33.77137077205131];
-    testBusFeature = new Feature({
-      geometry: new Point(busCoord)
-    });
-    testBusFeature.setStyle(new Style({ 
-      image: new CircleStyle({
-        radius: 20,
-        fill: new Fill({ color: 'red'}),
-        stroke: new Stroke({ color: "#0"})
-      })}));
-    testBusFeature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-    testBusFeature.setProperties({"entity": entity,
-      "routeName": routeName || '',
-      "nextStop": nextStop || '',
-      "capacity": capacity || '',
-      "ETA": ETA || '',
-    });
-    BusSource.addFeature(testBusFeature);
-
     // Retrieve each feature in the database
     json.body.forEach(function(feature){
       // Pull properties from the bus stop feature
@@ -275,7 +244,7 @@ function fetchBusStops() {
     });
 
     // Add cluster to map
-    map.addLayer(clusters);
+    // map.addLayer(clusters);
   })
 }
 
@@ -317,27 +286,32 @@ function fetchBusTravelData() {
      
     let promise = Promise.resolve();
     // Handle each green bus route
-    json.body.forEach(function(feature){
-      promise = promise.then(function() {
-        return new Promise(function (resolve) {
-          
-          let routeCoord = fromLonLat([feature.lon, feature.lat]);
-          testBusFeature.getGeometry().setCoordinates(routeCoord);
-          
-
-          setTimeout(resolve, 200);
+    function loopGreenRoute() {
+      json.body.forEach(function(feature){
+        promise = promise.then(function() {
+          return new Promise(function (resolve) {
+            
+            let routeCoord = fromLonLat([feature.lon, feature.lat]);
+            testBusFeature.getGeometry().setCoordinates(routeCoord);
+            
+  
+            setTimeout(resolve, 3000);
+          });
         });
       });
-    });
-
+    }
+    
+    // Initiate our simulated bus' travel
+    loopGreenRoute();
     promise.then(function() {
       console.log("loop complete");
+      loopGreenRoute();
     });
   })
 }
 
 
-//fetchBusStops();
+fetchBusStops();
 fetchBusTravelData();
 
 // setInterval(function() {
