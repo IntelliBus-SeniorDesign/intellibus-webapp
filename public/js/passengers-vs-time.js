@@ -5,6 +5,10 @@ window.onload = (event) => {
   ///////////////////////////////////////////////////////////////////////
   ///                           DEFINING GLOBALS
   ///////////////////////////////////////////////////////////////////////
+  let analyticsBusesDeployed = 0;
+  let analyticsPassengerCount = 0;
+  let analyticsAveragePassengers = 0;
+
   // Define our data inputs and formatting
   
   const dataInputs = 
@@ -75,8 +79,8 @@ window.onload = (event) => {
 
   // Populate labels, data
   console.log("Populating dataset", mockDataset);
+  
   for (let date of Object.keys(mockDataset)) {
-
     // get data per time value
     for (let time of Object.keys(mockDataset[date])) {
 
@@ -87,7 +91,7 @@ window.onload = (event) => {
       //push value for each key in dataInputs[]
       for (let dataId of Object.keys(dataInputs)) {
         let dataForId = mockDataset[date][time][dataId];
-
+        
         // console.log('Adding value', dataForId, 'for', dataId);
         dataInputs[dataId]['data'].push(dataForId);
       }
