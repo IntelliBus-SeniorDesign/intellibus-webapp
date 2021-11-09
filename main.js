@@ -127,29 +127,6 @@ selectClick.on('select', function(e) {
                                 'Current Capacity: ';
       } 
       overlay.setPosition(coordinate);
-      // var model = feature.getProperties()["model"];
-      // // Make sure our selected feature is an icon
-      // if (model) {
-      //   document.getElementById("info").style.visibility = 'visible';
-
-      //   // populate html fields
-      //   var properties = feature.getProperties();
-
-      //   console.log(properties);
-      //   for (var key in properties) {
-      //     let element = document.getElementById(key);
-      //     if (element)
-      //       document.getElementById(key).innerHTML = key + " : " + (properties[key] ? properties[key] : "N/A");
-      //   }
-      //   // populate the coordinates
-      //   let element = document.getElementById('loc');
-      //   let loc = toLonLat(feature.getGeometry().getCoordinates());
-      //   document.getElementById('loc').innerHTML = toStringHDMS(loc, 1);
-
-      //   // move the selection to the clicked feature
-      //   selectionOverlay.setGeometry(properties["geometry"]);
-      //   selectionOverlay.setStyle(selectionOverlayStyle);
-      // }
     });
   }
 });
@@ -290,11 +267,14 @@ function fetchBusTravelData() {
         promise = promise.then(function() {
           return new Promise(function (resolve) {
             
+            // calculate the new coordinate
             let routeCoord = fromLonLat([feature.lon, feature.lat]);
             testBusFeature.getGeometry().setCoordinates(routeCoord);
             
-  
-            setTimeout(resolve, 3000);
+            // reset the HUD overlay if focused on the bus
+            if(overlay.getPosition() && header.innerHTML.includes("BUS")) overlay.setPosition(routeCoord);
+
+            setTimeout(resolve, 2000);
           });
         });
       });
@@ -314,13 +294,5 @@ fetchBusStops();
 fetchBusTravelData();
 
 // setInterval(function() {
-//   r = testBusFeature.getGeometry().getCoordinates();
-//   // console.log(r);
-//   add(r, [25, 0]);
-
-//   testBusFeature.getGeometry().setCoordinates(r);
-//     //map1.getView().setCenter(coord);
-//   BusSource.refresh();
-//   BusSource.addFeature(testBusFeature);
 //   if(overlay.getPosition()) overlay.setPosition(r);
 // }, 1000)
