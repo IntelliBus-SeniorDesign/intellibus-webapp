@@ -23,6 +23,7 @@ import Overlay from 'ol/Overlay';
 import CircleStyle from 'ol/style/Circle';
 
 import busIcon from 'data-url:./public/assets/images/bus_icon.png';
+import busStopIcon from 'data-url:./public/assets/images/bus_stop.png';
 /**
  * Initialize Globals
  */
@@ -37,15 +38,15 @@ const selectClick = new Select({
 });
 const RouteColors = {
   'Blue':             '#0000ff',
-  'Charter':          '#003300',
-  'Emory-GT':         '#ff66ff',
-  'Gold':             '#FFD700',
-  'Green':            '#32a852',
+  'Charter':          '#fd8d3c',
+  'Emory-GT':         '#fc79e4',
+  'Gold':             '#eaaa00',
+  'Green':            '#2ca02c',
   'Grocery':          '#6600cc',
-  'Midnight Rambler': '#003300',
-  'NARA-TEP':         '#66ccff',
-  'Red':              '#ff0000',
-  'Tech Square':      '#996633',
+  'Midnight Rambler': '#54585a',
+  'NARA-TEP':         '#00ced1',
+  'Red':              '#e60000',
+  'Tech Square':      '#9370db',
 }
 var testBusFeature;
 // Popup elements
@@ -163,12 +164,12 @@ function fetchBusStops() {
       let stopFeature = new Feature({
         geometry: new Point(coord),
       });
-      stopFeature.setStyle(new Style({ 
-        image: new CircleStyle({
-          radius: 8,
-          fill: new Fill({ color: RouteColors[routeName]}),
-          stroke: new Stroke({ color: "#0"})
-        })}));
+      stopFeature.setStyle
+        (new Style({ 
+          image: new Icon({
+           src: busStopIcon,
+           color:  RouteColors[routeName]
+         })}));
       stopFeature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
 
       // console.log(toStringXY(coord, 5));
