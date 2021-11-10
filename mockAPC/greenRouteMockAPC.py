@@ -17,7 +17,7 @@ certificatePath = 'certs_and_keys/dev_mockAPC.cert.pem'
 privateKeyPath = 'certs_and_keys/dev_mockAPC.private.key'
 useWebsocket = False
 clientId = 'basicPubSub'
-topic = 'topic_1'
+topic = 'devmockAPC/data'
 
 # Port defaults
 if useWebsocket:  # When no port override for WebSocket, default to 443
