@@ -9,6 +9,10 @@ import random
 # from dateutil.tz import tzoffset
 
 
+# import green route fake GPS data
+import greenRouteData as ext
+
+
 AllowedActions = ['both', 'publish', 'subscribe']
 
 host = 'afvi82z02r2mg-ats.iot.us-east-2.amazonaws.com'
@@ -60,38 +64,22 @@ myAWSIoTMQTTClient.connect()
 
 time.sleep(2)
 
-loopCount = 0
+# send GPS data using MQTT to broker
+for item in ext.greenRoute:
+    # if item has stop in wp name, random generate the passenger ingress/egress
+    # random.randint(0,1)
+    
+    # build payload
+    messageJson = {}
+    messageJson['deviceID'] = 101
+    now = datetime.datetime.utcnow()
+    messageJson['timestamp'] = int(time.time())
+    messageJson['coordinate'] = [item['lat'], item['lon']] 
+    messageJson['wp_name'] = item['name']
 
-def getData():
-    messageJson={}
-    # station=random.randint(0,1)
-    # if station==0:
-    #     messageJson['stationID']='ST102'
-    #     messageJson['latitude']=33.717950
-    #     messageJson['longitude']=-84.454540
-    # elif station==1:
-    #     messageJson['stationID']='ST105'
-    #     messageJson['latitude']=33.933337
-    #     messageJson['longitude']=-84.357290
-    
-    messageJson['deviceID']= 101
-    now=datetime.datetime.utcnow()
-    messageJson['timestamp']=int(time.time())
-    messageJson['dataTime']=str(now.strftime("%Y-%m-%dT:%H:%M:%S"))
-    
-    # messageJson['pm10']=random.randint(0,6040)/10.0
-    # #messageJson['o3']=random.randint(0,604)/1000.0
-    # #messageJson['no2']=random.randint(65,204)/100.0
-    # messageJson['so2']=random.randint(0,1004)/1000.0
-    # messageJson['co']=random.randint(0,504)/100.0
-    
-    return messageJson
-
-# for loopCount in range(0,20):   
-while(True):     
-    message = getData()
-    messageJson = json.dumps(message)
+    # send payload over MQTT connection
+    messageJson = json.dumps(messageJson)
     myAWSIoTMQTTClient.publish(topic, messageJson, 1)
     print('Published topic %s: %s\n' % (topic, messageJson))
-    loopCount += 1
+    # send data every 2 seconds
     time.sleep(2)
