@@ -1,3 +1,14 @@
+# ===============================
+# AUTHOR: Shadman Ahmed
+# Team: IntelliBus 
+# CREATE DATE: 11/06/2021
+# PURPOSE: This is the a python script that synthesizes a APC. Sends fake (predeteremined) GPS and passenger count to our APC.
+# SPECIAL NOTES:
+# ===============================
+# Change History:
+# 
+# ==================================
+
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 import logging
 import time
