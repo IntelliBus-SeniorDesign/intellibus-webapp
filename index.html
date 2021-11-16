@@ -26,6 +26,11 @@
 			Live Transit Map
 		</h1>
     <div class="mt-4 border-4" id="map"></div>
+    <div id="popup" class="absolute bg-white shadow p-4 rounded border-2 bottom-2 -left-12 min-w-max">
+      <div id="popup-header" class="font-bold pr-14"></div>
+      <a href="#" id="popup-closer" class="absolute top-3 right-4 text-xl hover:text-yellow-500">🞭</a>
+      <div id="popup-content"></div>
+    </div>
 		<include src="public/layouts/footer.html"></include>
     <script src="./main.js" type="module"></script>
 	</body>

@@ -1,3 +1,13 @@
+# ===============================
+# AUTHOR: Shadman Ahmed
+# Team: IntelliBus 
+# CREATE DATE: 09/19/2021
+# PURPOSE: This is the py script to automate entering Stop info into DynamoDB.
+# SPECIAL NOTES:
+# ===============================
+# Change History:
+# 11/10/21: Updated this script to correctly parse from routes instead of stops.
+# ==================================
 import json 
 import boto3
 from decimal import Decimal
