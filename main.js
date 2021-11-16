@@ -137,7 +137,6 @@ map.on('pointermove', function(e) {
     map.getTargetElement().style.cursor = map.hasFeatureAtPixel(pixel) ? 'pointer': '';
   }
 });
-
 /**
  * Fetch bus-stop data from AWS API endpoint
  * Display the results and cluster overlapping bus routes
@@ -149,7 +148,6 @@ function fetchBusStops() {
   })
   .then(function(json){
     console.log(json.body);
-
     // Retrieve each feature in the database
     json.body.forEach(function(feature){
       // Pull properties from the bus stop feature
