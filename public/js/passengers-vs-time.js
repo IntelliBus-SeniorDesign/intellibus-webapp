@@ -97,7 +97,56 @@ window.onload = (event) => {
       }
     }
   }
-  
+
+
+  /// other chart
+  const testLabels = ['1', '2', '3'];
+  const testdata = {
+    labels: testLabels,
+    datasets: [{
+      label: 'Percent change in Max capacity vs. Time',
+      data: [0.03, 0.75, -0.60],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 205, 86, 0.2)',
+      ],
+      borderColor: [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+      ],
+      borderWidth: 1,
+    }]
+  }
+  const testconfig = {
+    type: 'bar',
+    data: testdata,
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: 'Percent Change vs. Max Capacity vs. Time',
+          padding: 20,
+          font: {
+            size: 24
+          }
+        },
+        legend: {
+          display: true,
+          position: 'right',
+          labels: {
+            padding: 30
+          }
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
   ///////////////////////////////////////////////////////////////////////
   ///                           CREATE CHART
   ///////////////////////////////////////////////////////////////////////
@@ -143,5 +192,9 @@ window.onload = (event) => {
   const passengerTimeChart = new Chart(
     document.getElementById('passengers-vs-time'),
     config
+  );
+  const testpassengerTimeChart = new Chart(
+    document.getElementById('weight-passengers-vs-time'),
+    testconfig
   );
 };
