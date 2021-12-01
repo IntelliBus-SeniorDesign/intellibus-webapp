@@ -6,7 +6,7 @@
 # SPECIAL NOTES:
 # ===============================
 # Change History:
-# 
+# Added random ingress/egress passenger data. Added random time stop time at Stop WP.
 # ==================================
 
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
@@ -75,22 +75,71 @@ myAWSIoTMQTTClient.connect()
 
 time.sleep(2)
 
+total_passengers = random.randint(2,10)
+
+
 # send GPS data using MQTT to broker
 for item in ext.greenRoute:
     # if item has stop in wp name, random generate the passenger ingress/egress
-    # random.randint(0,1)
-    
-    # build payload
-    messageJson = {}
-    messageJson['deviceID'] = 101
-    now = datetime.datetime.utcnow()
-    messageJson['timestamp'] = int(time.time())
-    messageJson['coordinate'] = [item['lat'], item['lon']] 
-    messageJson['wp_name'] = item['name']
+    ingress = 0
+    egress = 0
+    stopmoving = False
+    if 'Stop' in item['name']:
+        stopmoving = True
+        chooseGreater = random.randint(0,1)
+        stopcounts = 0
+        if chooseGreater == 1:
+            while True:
+                # Ingress gets higher bound of random no
+                ingress = random.randint(5,11)
+                # Egress gets lower bound of random no
+                egress = random.randint(4,7)
+                stopscounts = total_passengers + ingress - egress
+                if stopscounts >= 0 and stopscounts < 30:
+                    break
+        elif chooseGreater == 0:
+            while True:
+                # Ingress gets lower bound of random no
+                ingress = random.randint(4,7)
+                # Egress gets higer bound of random no
+                egress = random.randint(5,11)
+                stopscounts = total_passengers + ingress - egress
+                if stopscounts >= 0 and stopscounts < 30:
+                    break
+    if stopmoving:
+        total_passengers  = total_passengers + ingress - egress
+        # build payload
+        messageJson = {}
+        messageJson['deviceID'] = 101
+        now = datetime.datetime.utcnow()
+        messageJson['timestamp'] = int(time.time())
+        messageJson['coordinate'] = [item['lat'], item['lon']] 
+        messageJson['wp_name'] = item['name']
+        messageJson['ingress'] = ingress
+        messageJson['egress'] = egress
+        messageJson['total_passengers'] = total_passengers
+        messageJson['stop_move'] = stopmoving
 
-    # send payload over MQTT connection
-    messageJson = json.dumps(messageJson)
-    myAWSIoTMQTTClient.publish(topic, messageJson, 1)
-    print('Published topic %s: %s\n' % (topic, messageJson))
-    # send data every 2 seconds
-    time.sleep(2)
+        # send payload over MQTT connection
+        messageJson = json.dumps(messageJson)
+        myAWSIoTMQTTClient.publish(topic, messageJson, 1)
+        print('Published topic %s: %s\n' % (topic, messageJson))
+        # send data every x seconds since its a stop
+        stop_time = random.randint(30,45)
+        time.sleep(stop_time)
+    else:
+        # build payload
+        messageJson = {}
+        messageJson['deviceID'] = 101
+        now = datetime.datetime.utcnow()
+        messageJson['timestamp'] = int(time.time())
+        messageJson['coordinate'] = [item['lat'], item['lon']] 
+        messageJson['wp_name'] = item['name']
+        messageJson['total_passengers'] = total_passengers
+        messageJson['stop_move'] = stopmoving
+        # send payload over MQTT connection
+        messageJson = json.dumps(messageJson)
+        myAWSIoTMQTTClient.publish(topic, messageJson, 1)
+        print('Published topic %s: %s\n' % (topic, messageJson))
+        # send data every 2 seconds
+        time.sleep(2)
