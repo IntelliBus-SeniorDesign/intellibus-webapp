@@ -118,6 +118,7 @@ selectClick.on('select', function(e) {
         header.innerHTML = "TEST BUS1";
         content.innerHTML = 'GT Route: ' + props.routeName + '<br />' +
                               'Estimated wait time: ' + props.ETA + '<br />' +
+                              'Bus Id' + props.busId + '<br />' +
                               'Current Capacity: ' + props.capacity + '<br />' +
                               'Next Stop: ' + props.nextStop;
       }
@@ -321,6 +322,7 @@ function devgreenBusAPI() {
         total_passengers -> capacity
         wp_name -> nextStop
     */
+    let busId = "deviceId";
     let entity = "bus";
     let nextStop = "nextStopData";
     let capacity = "capacity data";
@@ -333,6 +335,7 @@ function devgreenBusAPI() {
        src: busIcon
      })}));
      greenDevBusFeature.setProperties({"entity": entity,
+      "busId": busId || '',
       "nextStop": nextStop || '',
       "capacity": capacity || '',
     });
