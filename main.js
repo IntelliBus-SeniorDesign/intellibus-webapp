@@ -294,11 +294,12 @@ function fetchBusTravelData() {
  * initial shard iterator gather
  */
 let nextIterator;
-fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/streamNamedev_greenRouteStream/sharditerator?shard-id=shardId-000000000000')
+fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/sharditerator?shard-id=shardId-000000000000')
 .then(function(response) {
   console.log('Initial shard iterator response: ', response);
-  nextIterator = response;
-});
+  return response.json();
+})
+.then(data => console.log('initial shard', data));
 
 function devgreenBusAPI() {
   // Get the data from our GET record API endpoint
@@ -350,9 +351,21 @@ function devgreenBusAPI() {
   }));
 }
 
+function testAPICall() {
+  fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/records', {
+	mode: 'cors',
+	headers: {
+		"Shard-Iterator": nextIterator
+	}
+})
+  .then(response => response.json())
+  .then(data => console.log(data));
+}
 fetchBusStops();
 fetchBusTravelData();
 // setTimeout(devgreenBusAPI, 2000);
+console.warn("initiating API call");
+testAPICall();
 
 // setInterval(function() {
 //   if(overlay.getPosition()) overlay.setPosition(r);
