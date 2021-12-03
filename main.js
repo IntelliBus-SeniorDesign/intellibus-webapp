@@ -2,6 +2,7 @@ import {Map, View} from 'ol';
 import MousePosition from 'ol/control/MousePosition';
 import Cluster from 'ol/source/Cluster';
 import VectorLayer from 'ol/layer/Vector';
+import Collection from 'ol/Collection';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import {Style, Fill, Stroke, Text, Icon} from 'ol/style';
@@ -108,7 +109,6 @@ selectClick.on('select', function(e) {
   else {
     selectedFeatures.forEach(function(feature) {
       let props = feature.getProperties();
-      console.log("====");
       console.log(props);
 
       // Display the Overlay at the feature location
@@ -116,11 +116,10 @@ selectClick.on('select', function(e) {
       if (props.entity == 'bus')
       {
         header.innerHTML = "BUS " + (props.busId || "TEST");
-        content.innerHTML = 'GT Route: ' + props.routeName + '<br />' +
-                              'Estimated wait time: ' + props.ETA + '<br />' +
-                              'Bus Id: ' + props.busId + '<br />' +
-                              'Current Capacity: ' + props.capacity + '<br />' +
-                              'Next Stop: ' + props.nextStop;
+        content.innerHTML = 'Location: (' +  props.lat + ', ' + props.lon + ')<br />' + 
+                              'Total Passengers: ' + props.capacity + '<br />' +
+                              'Next Stop: ' + props.nextStop + '<br />' + 
+                              'Status: ' + '<strong>' + (props.status || 'Moving') + '</strong>';
       }
       else 
       {
@@ -272,8 +271,17 @@ function fetchBusTravelData() {
             let routeCoord = fromLonLat([feature.lon, feature.lat]);
             testBusFeature.getGeometry().setCoordinates(routeCoord);
             
+            testBusFeature.setProperties({"entity": entity,
+            "lon": feature.lon || '',
+            "lat": feature.lat || '',
+          });
+
             // reset the HUD overlay if focused on the bus
             if(overlay.getPosition() && header.innerHTML.includes("BUS TEST")) overlay.setPosition(routeCoord);
+
+            // fire a select event
+            selectClick.set('features', new Collection([testBusFeature]));
+            selectClick.dispatchEvent('select');
 
             setTimeout(resolve, 2000);
           });
@@ -338,8 +346,16 @@ async function getAPCRecords() {
           let entity = "bus";
           let busId = decoded.deviceID
           let nextStop = decoded.wp_name;
-          let capacity = decoded.total_passengers
+          let capacity = decoded.total_passengers;
           let busCoord = fromLonLat([decoded.coordinate[1], decoded.coordinate[0]]);
+          let status = function() {
+            if (decoded.stop_move) {
+              return 'Loading passengers';
+            }
+            else {
+              return 'Moving';
+            }
+          }
           greenDevBusFeature = new Feature({
             geometry: new Point(busCoord)
           });
@@ -351,7 +367,10 @@ async function getAPCRecords() {
             "entity": entity,
             "busId": busId || '',
             "nextStop": nextStop || '',
-            "capacity": capacity || '',
+            "capacity": capacity || '0',
+            "lat": (decoded.coordinate[0])|| '',
+            "lon": (decoded.coordinate[1]) || '',
+            "status": status
           });
 
           // Add the feature to our vector layer
@@ -362,100 +381,42 @@ async function getAPCRecords() {
           let entity = "bus";
           let busId = decoded.deviceID
           let nextStop = decoded.wp_name;
-          let capacity = decoded.total_passengers
+          let capacity = decoded.total_passengers;
           let busCoord = fromLonLat([decoded.coordinate[1], decoded.coordinate[0]]);
+          let status = function() {
+            if (decoded.stop_move) {
+              return 'Loading passengers';
+            }
+            else {
+              return 'Moving';
+            }
+          }
           greenDevBusFeature.getGeometry().setCoordinates(busCoord);
             
+        
           // reset the HUD overlay if focused on the bus
-          if(overlay.getPosition() && header.innerHTML.includes("BUS " + busId)) overlay.setPosition(busCoord);
+        if(overlay.getPosition() && header.innerHTML.includes("BUS " + busId)) overlay.setPosition(busCoord);
 
           greenDevBusFeature.setProperties({
             "entity": entity,
             "busId": busId || '',
             "nextStop": nextStop || '',
-            "capacity": capacity || '',
+            "capacity": capacity || '0',
+            "lat": (decoded.coordinate[0])|| '',
+            "lon": (decoded.coordinate[1]) || '',
+            "status": status
           });
         }
+        
+        // fire a select event
+        selectClick.set('features', new Collection([greenDevBusFeature]));
+        selectClick.dispatchEvent('select');
 
         // Iterate for next shards
         getAPCRecords();
       }
     }
-  }, 3000);
-}
-
-/*fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/sharditerator?shard-id=shardId-000000000000')
-.then(function(response) {
-  return response.json();
-})
-.then(function(data) {
-  // nextIterator = await getNextShardIterator(data);
-  console.log('next iterator', data.ShardIterator);
-})
-.then(fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/records', {
-	mode: 'cors',
-	headers: {
-		"Shard-Iterator": "AAAAAAAAAAH9TfhoP8Dwm6V5k1Ex8RhID19I9ZLratmKnMrrclQccLKj8VET4UrU7oEjseNn7kHkSPir86UQvLxFdjZ4FzGAy29Q8G3+off9TuNsDHBGO6VAspn79uszGQhryPBfEgkOZzUDJrcK6TBYT5LjpBy6GH+Btch+6PvT22SC1PVi2/XOlYNq3ddg0BvK08j8Tff92AmDiatdb70DTSkV4PX2Q3s2FdY9E1cGM8QePgFB0/cOi7TiayOJVxH63I6H2sM="
-	}
-})
-  .then(response => response.json())
-  .then(data => console.log('record', data)))
-  .then(function() {
-    console.log('decoded', atob("eyJkZXZpY2VJRCI6IDEwMSwgInRpbWVzdGFtcCI6IDE2Mzg1MDMzMzQsICJjb29yZGluYXRlIjogWyIzMy43NzMyNSIsICItODQuMzk3MDEiXSwgIndwX25hbWUiOiAiU3RvcDA6IFdQMTItTCIsICJpbmdyZXNzIjogNywgImVncmVzcyI6IDUsICJ0b3RhbF9wYXNzZW5nZXJzIjogMTIsICJzdG9wX21vdmUiOiB0cnVlfQ=="));
-  });
-*/
-async function getNextShardIterator(data) {
-  return data.ShardIterator;
-}
-
-function devgreenBusAPI() {
-  // Get the data from our GET record API endpoint
-  fetch('the api call for the GET stream records' + nextIterator, {mode: 'cors'})
-  .then(function(response) {
-    return response.json;
-  })
-  .then(function(json) {
-    // our response should be in base64. let's decode it
-    // example b64:
-    //  EyJkZXZpY2VJRCI6IDEwMSwgInRpbWVzdGFtcCI6IDE2MzgxMzM1MDMsICJjb29yZGluYXRlIjogWyIzMy43NzMyNSIsICItODQuMzk3MDEiXSwgIndwX25hbWUiOiAiU3RvcDA6IFdQMTItTCIsICJpbmdyZXNzIjogNSwgImVncmVzcyI6IDUsICJ0b3RhbF9wYXNzZW5nZXJzIjogNiwgInN0b3BfbW92ZSI6IHRydWV9 
-    // example reponse:
-    //  "\&quot;deviceID\&quot;: 101, \&quot;timestamp\&quot;: 1638133503, \&quot;coordinate\&quot;: [\&quot;33.77325\&quot;, \&quot;-84.39701\&quot;], \&quot;wp_name\&quot;: \&quot;Stop0: WP12-L\&quot;, \&quot;ingress\&quot;: 5, \&quot;egress\&quot;: 5, \&quot;total_passengers\&quot;: 6, \&quot;stop_move\&quot;: true}"
-    
-    let data = json.Data; // correct?
-    // decode
-    let decoded = atob(data);
-    /* Parse the decoded string to get the values I need 
-        deviceId -> busId
-        coordinate
-        total_passengers -> capacity
-        wp_name -> nextStop
-    */
-    let busId = "deviceId";
-    let entity = "bus";
-    let nextStop = "nextStopData";
-    let capacity = "capacity data";
-    let busCoord = fromLonLat([-84.39617872238159, 33.77137077205131]);
-    greenDevBusFeature = new Feature({
-      geometry: new Point(busCoord)
-    });
-    greenDevBusFeature.setStyle(new Style({ 
-      image: new Icon({
-       src: busIcon
-     })}));
-     greenDevBusFeature.setProperties({"entity": entity,
-      "busId": busId || '',
-      "nextStop": nextStop || '',
-      "capacity": capacity || '',
-    });
-
-    // somewhere here flush the features on BusSource
-    BusSource.addFeature(greenDevBusFeature);
-  })
-  .then(fetch('the api call for the GET shard iterator' + nextIterator, {mode: 'cors'})
-  .then(function(response) {
-    // update the next iterator
-    nextIterator = response;
-  }));
+  }, 2000);
 }
 
 // Call the AWS stream for available Bus information
