@@ -49,7 +49,7 @@ const RouteColors = {
   'Tech Square':      '#9370db',
 }
 var testBusFeature;
-var greenDevBusFeature;
+var greenDevBusFeature = null;
 // Popup elements
 const container = document.getElementById('popup');
 const content = document.getElementById('popup-content');
@@ -115,10 +115,10 @@ selectClick.on('select', function(e) {
       let coordinate = feature.getGeometry().getCoordinates();
       if (props.entity == 'bus')
       {
-        header.innerHTML = "TEST BUS1";
+        header.innerHTML = "BUS " + (props.busId || "TEST");
         content.innerHTML = 'GT Route: ' + props.routeName + '<br />' +
                               'Estimated wait time: ' + props.ETA + '<br />' +
-                              'Bus Id' + props.busId + '<br />' +
+                              'Bus Id: ' + props.busId + '<br />' +
                               'Current Capacity: ' + props.capacity + '<br />' +
                               'Next Stop: ' + props.nextStop;
       }
@@ -273,7 +273,7 @@ function fetchBusTravelData() {
             testBusFeature.getGeometry().setCoordinates(routeCoord);
             
             // reset the HUD overlay if focused on the bus
-            if(overlay.getPosition() && header.innerHTML.includes("BUS")) overlay.setPosition(routeCoord);
+            if(overlay.getPosition() && header.innerHTML.includes("BUS TEST")) overlay.setPosition(routeCoord);
 
             setTimeout(resolve, 2000);
           });
@@ -291,15 +291,122 @@ function fetchBusTravelData() {
 }
 
 /**
- * initial shard iterator gather
+ * Initialize the next iterator field
  */
-let nextIterator;
-fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/sharditerator?shard-id=shardId-000000000000')
+let green_nextIterator;
+async function initializeShardIterators() {
+  /// Green Dev Route iterator
+  let green_response = await fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/sharditerator?shard-id=shardId-000000000000');
+  let green_json = await green_response.json();
+  green_nextIterator = green_json.ShardIterator;
+  console.log ('Init Green Shard Iterator', green_nextIterator);
+
+  return true; 
+}
+
+/**
+ * Get the next APC records and update *_nextIterator with response
+ */
+async function getAPCRecords() {
+  let green_response;
+  // GET records until Records is not empty
+  green_timer = setInterval(async function() {
+    green_response = await fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/records', {
+      mode: 'cors',
+      headers: {
+        "Shard-Iterator": green_nextIterator
+      }});
+      // convert response to a readable format
+      green_response = await green_response.json();
+      console.log('GET Green records', green_response);
+
+    // Now evaluate if the response has an empty record or not
+    if (green_response) {
+      if (green_response.Records.length > 0) {
+        // Set the next iterator value and the record value
+        let data = green_response.Records[0].Data;
+        green_nextIterator = green_response.NextShardIterator;
+        
+        clearInterval(green_timer);
+        
+        // Convert the response to something meaningful
+        let decoded = JSON.parse(atob(data));
+        console.warn('record obtained for green', decoded);
+
+        // Create a new feature if not exist, else update its information
+        if (!greenDevBusFeature) {
+          let entity = "bus";
+          let busId = decoded.deviceID
+          let nextStop = decoded.wp_name;
+          let capacity = decoded.total_passengers
+          let busCoord = fromLonLat([decoded.coordinate[1], decoded.coordinate[0]]);
+          greenDevBusFeature = new Feature({
+            geometry: new Point(busCoord)
+          });
+          greenDevBusFeature.setStyle(new Style({ 
+            image: new Icon({
+            src: busIcon
+          })}));
+          greenDevBusFeature.setProperties({
+            "entity": entity,
+            "busId": busId || '',
+            "nextStop": nextStop || '',
+            "capacity": capacity || '',
+          });
+
+          // Add the feature to our vector layer
+          BusStopSource.addFeature(greenDevBusFeature);
+        }
+        // Update location and props
+        else {
+          let entity = "bus";
+          let busId = decoded.deviceID
+          let nextStop = decoded.wp_name;
+          let capacity = decoded.total_passengers
+          let busCoord = fromLonLat([decoded.coordinate[1], decoded.coordinate[0]]);
+          greenDevBusFeature.getGeometry().setCoordinates(busCoord);
+            
+          // reset the HUD overlay if focused on the bus
+          if(overlay.getPosition() && header.innerHTML.includes("BUS " + busId)) overlay.setPosition(busCoord);
+
+          greenDevBusFeature.setProperties({
+            "entity": entity,
+            "busId": busId || '',
+            "nextStop": nextStop || '',
+            "capacity": capacity || '',
+          });
+        }
+
+        // Iterate for next shards
+        getAPCRecords();
+      }
+    }
+  }, 3000);
+}
+
+/*fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/sharditerator?shard-id=shardId-000000000000')
 .then(function(response) {
-  console.log('Initial shard iterator response: ', response);
   return response.json();
 })
-.then(data => console.log('initial shard', data));
+.then(function(data) {
+  // nextIterator = await getNextShardIterator(data);
+  console.log('next iterator', data.ShardIterator);
+})
+.then(fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/records', {
+	mode: 'cors',
+	headers: {
+		"Shard-Iterator": "AAAAAAAAAAH9TfhoP8Dwm6V5k1Ex8RhID19I9ZLratmKnMrrclQccLKj8VET4UrU7oEjseNn7kHkSPir86UQvLxFdjZ4FzGAy29Q8G3+off9TuNsDHBGO6VAspn79uszGQhryPBfEgkOZzUDJrcK6TBYT5LjpBy6GH+Btch+6PvT22SC1PVi2/XOlYNq3ddg0BvK08j8Tff92AmDiatdb70DTSkV4PX2Q3s2FdY9E1cGM8QePgFB0/cOi7TiayOJVxH63I6H2sM="
+	}
+})
+  .then(response => response.json())
+  .then(data => console.log('record', data)))
+  .then(function() {
+    console.log('decoded', atob("eyJkZXZpY2VJRCI6IDEwMSwgInRpbWVzdGFtcCI6IDE2Mzg1MDMzMzQsICJjb29yZGluYXRlIjogWyIzMy43NzMyNSIsICItODQuMzk3MDEiXSwgIndwX25hbWUiOiAiU3RvcDA6IFdQMTItTCIsICJpbmdyZXNzIjogNywgImVncmVzcyI6IDUsICJ0b3RhbF9wYXNzZW5nZXJzIjogMTIsICJzdG9wX21vdmUiOiB0cnVlfQ=="));
+  });
+*/
+async function getNextShardIterator(data) {
+  return data.ShardIterator;
+}
 
 function devgreenBusAPI() {
   // Get the data from our GET record API endpoint
@@ -351,21 +458,23 @@ function devgreenBusAPI() {
   }));
 }
 
-function testAPICall() {
-  fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/records', {
-	mode: 'cors',
-	headers: {
-		"Shard-Iterator": nextIterator
-	}
-})
-  .then(response => response.json())
-  .then(data => console.log(data));
-}
+// Call the AWS stream for available Bus information
 fetchBusStops();
+
+// Generate mock APC
 fetchBusTravelData();
+
+// Initialize Kinesis data stream shards and continue calling the next datastream
+(async function() {
+  let isInitialized = await initializeShardIterators();
+
+  if (isInitialized) {
+    console.warn('Shards initialized. Let\'s hope nothing breaks', isInitialized);
+    getAPCRecords();
+  }
+})();
+
 // setTimeout(devgreenBusAPI, 2000);
-console.warn("initiating API call");
-testAPICall();
 
 // setInterval(function() {
 //   if(overlay.getPosition()) overlay.setPosition(r);
