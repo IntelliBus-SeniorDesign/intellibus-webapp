@@ -100,21 +100,43 @@ window.onload = (event) => {
 
 
   /// other chart
-  const testLabels = ['1', '2', '3'];
+  const testLabels = [
+    ['12/2/2021', '8:00'],
+    ['12/2/2021', '9:00'],
+    ['12/2/2021', '10:00'],
+    ['12/2/2021', '11:00'],
+    ['12/2/2021', '12:00'],
+    ['12/2/2021', '13:00'],
+    ['12/2/2021', '14:00'],
+    ['12/2/2021', '15:00'],
+    ['12/2/2021', '16:00']
+];
   const testdata = {
     labels: testLabels,
     datasets: [{
-      label: 'Percent change in Max capacity vs. Time',
-      data: [0.03, 0.75, -0.60],
+      label: 'Bus1',
+      data: [0.03, 0.75, 0.2, -0.3, -0.4, 0.2, -0.3, 0.15, -0.3],
       backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-        'rgba(255, 205, 86, 0.2)',
+        'rgba(34, 139, 34, 0.4)',
+        'rgba(34, 139, 34, 0.4)',
+        'rgba(34, 139, 34, 0.4)',
+        'rgba(255, 99, 132, 0.4)',
+        'rgba(255, 99, 132, 0.4)',
+        'rgba(34, 139, 34, 0.4)',
+        'rgba(255, 99, 132, 0.4)',
+        'rgba(34, 139, 34, 0.4)',
+        'rgba(255, 99, 132, 0.4)',
       ],
       borderColor: [
+        'rgba(34, 139, 34)',
+        'rgba(34, 139, 34)',
+        'rgba(34, 139, 34)',
         'rgb(255, 99, 132)',
-        'rgb(255, 159, 64)',
-        'rgb(255, 205, 86)',
+        'rgb(255, 99, 132)',
+        'rgba(34, 139, 34)',
+        'rgb(255, 99, 132)',
+        'rgba(34, 139, 34)',
+        'rgb(255, 99, 132)',
       ],
       borderWidth: 1,
     }]
@@ -126,7 +148,7 @@ window.onload = (event) => {
       plugins: {
         title: {
           display: true,
-          text: 'Percent Change vs. Max Capacity vs. Time',
+          text: '% Change in Capacity vs. Time',
           padding: 20,
           font: {
             size: 24

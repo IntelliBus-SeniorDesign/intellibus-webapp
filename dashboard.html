@@ -12,34 +12,77 @@
 		<div class="pt-4"> <!--Spacer--></div>
     <div class="w-10/12 m-auto border-2">
       <!-- Stats -->
-      <div class="grid grid-cols-3 m-auto content-center gap-x-24">
-        <div class="border rounded text-center m-5 h-40 w-72">
+      <div class="grid grid-cols-3 mx-auto items-center ">
+        <div class="border rounded text-center mx-auto my-4 h-40 w-72">
           <div class="m-auto h-40">
-            <h3 class="text-xl font-semibold mt-8">Buses Deployed</h3>
-            <p id="analytics-buses-deployed" name="analytics-buses-deployed" class="text-2xl font-bold mt-6">29</p>
+            <h3 class="text-xl font-normal mt-8">Buses Deployed</h3>
+            <p id="analytics-buses-deployed" name="analytics-buses-deployed" class="text-2xl font-bold mt-6">4</p>
           </div>
         </div>
-        <div class="border rounded text-center m-5 h-40 w-72">
+        <div class="border rounded text-center mx-auto my-4 h-40 w-72">
           <div class="m-auto h-40">
             <h3 class="text-xl font-semibold mt-8">Live Total Passenger Count</h3>
-            <p id="analytics-passenger-count" name="analytics-passenger-count" class="text-2xl font-bold mt-6">618</p>
+            <p id="analytics-passenger-count" name="analytics-passenger-count" class="text-2xl font-bold mt-6">218</p>
           </div>
         </div>
-        <div class="border rounded text-center m-5 h-40 w-72">
+        <div class="border rounded text-center mx-auto my-4 h-40 w-72">
           <div class="m-auto h-40">
             <h3 class="text-xl font-semibold mt-8">Average Passengers per Bus</h3>
-            <p id="analytics-average-passengers" name="analytics-average-passengers" class="text-2xl font-bold mt-6">19</p>
+            <p id="analytics-average-passengers" name="analytics-average-passengers" class="text-2xl font-bold mt-6">54</p>
           </div>
         </div>
       </div>
 
+      <!-- Device info table -->
+      <div class="rounded-t-xl overflow-hidden bg-gradient-to-r from-emerald-50 to-teal-100 p-10">
+        <table class="table-auto mx-auto">
+          <thead>
+            <tr>
+              <th class="px-4 py-2 text-emerald-600">Device ID</th>
+              <th class="px-4 py-2 text-emerald-600">Last Checkin</th>
+              <th class="px-4 py-2 text-emerald-600">Device Type</th>
+              <th class="px-4 py-2 text-emerald-600">Battery Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">101</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">0</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">Mock APC - Route Synthesizer</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">NULL</td>
+            </tr>
+            <tr class="bg-emerald-200">
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">102</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">Tuesday, November 23, 2021 5:56:54.943 PM</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">Dev Test Unit</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">4950</td>
+            </tr>
+            <tr>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">103</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">0</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">Dev Test Unit</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">NULL</td>
+            </tr>
+            <tr>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">104</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">0</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">Mock APC - Route Synthesizer</td>
+              <td class="border border-emerald-500 px-4 py-2 text-emerald-600 font-light">NULL</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <!-- Chart.js Passengers vs. Time -->
-      <div class="h-4/6 border w-10/12 mx-auto">
-        <canvas class="p-4" id="passengers-vs-time"></canvas>
+      <div class="flex mx-auto justify-center">
+        <div class="h-4/6 border w-6/12 ">
+          <canvas class="p-4" id="passengers-vs-time"></canvas>
+        </div>
+        <div class="h-4/6 border w-6/12 ">
+          <canvas class="p-4" id="weight-passengers-vs-time"></canvas>
+        </div>
       </div>
-      <div class="h-4/6 border w-10/12 mx-auto">
-        <canvas class="p-4" id="weight-passengers-vs-time"></canvas>
-      </div>
+      
     </div>
     <include src="public/layouts/footer.html"></include>
 	</body>
