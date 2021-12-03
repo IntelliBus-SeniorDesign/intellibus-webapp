@@ -49,6 +49,7 @@ const RouteColors = {
   'Tech Square':      '#9370db',
 }
 var testBusFeature;
+var greenDevBusFeature;
 // Popup elements
 const container = document.getElementById('popup');
 const content = document.getElementById('popup-content');
@@ -117,6 +118,7 @@ selectClick.on('select', function(e) {
         header.innerHTML = "TEST BUS1";
         content.innerHTML = 'GT Route: ' + props.routeName + '<br />' +
                               'Estimated wait time: ' + props.ETA + '<br />' +
+                              'Bus Id' + props.busId + '<br />' +
                               'Current Capacity: ' + props.capacity + '<br />' +
                               'Next Stop: ' + props.nextStop;
       }
@@ -288,9 +290,82 @@ function fetchBusTravelData() {
   })
 }
 
+/**
+ * initial shard iterator gather
+ */
+let nextIterator;
+fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/sharditerator?shard-id=shardId-000000000000')
+.then(function(response) {
+  console.log('Initial shard iterator response: ', response);
+  return response.json();
+})
+.then(data => console.log('initial shard', data));
 
+function devgreenBusAPI() {
+  // Get the data from our GET record API endpoint
+  fetch('the api call for the GET stream records' + nextIterator, {mode: 'cors'})
+  .then(function(response) {
+    return response.json;
+  })
+  .then(function(json) {
+    // our response should be in base64. let's decode it
+    // example b64:
+    //  EyJkZXZpY2VJRCI6IDEwMSwgInRpbWVzdGFtcCI6IDE2MzgxMzM1MDMsICJjb29yZGluYXRlIjogWyIzMy43NzMyNSIsICItODQuMzk3MDEiXSwgIndwX25hbWUiOiAiU3RvcDA6IFdQMTItTCIsICJpbmdyZXNzIjogNSwgImVncmVzcyI6IDUsICJ0b3RhbF9wYXNzZW5nZXJzIjogNiwgInN0b3BfbW92ZSI6IHRydWV9 
+    // example reponse:
+    //  "\&quot;deviceID\&quot;: 101, \&quot;timestamp\&quot;: 1638133503, \&quot;coordinate\&quot;: [\&quot;33.77325\&quot;, \&quot;-84.39701\&quot;], \&quot;wp_name\&quot;: \&quot;Stop0: WP12-L\&quot;, \&quot;ingress\&quot;: 5, \&quot;egress\&quot;: 5, \&quot;total_passengers\&quot;: 6, \&quot;stop_move\&quot;: true}"
+    
+    let data = json.Data; // correct?
+    // decode
+    let decoded = atob(data);
+    /* Parse the decoded string to get the values I need 
+        deviceId -> busId
+        coordinate
+        total_passengers -> capacity
+        wp_name -> nextStop
+    */
+    let busId = "deviceId";
+    let entity = "bus";
+    let nextStop = "nextStopData";
+    let capacity = "capacity data";
+    let busCoord = fromLonLat([-84.39617872238159, 33.77137077205131]);
+    greenDevBusFeature = new Feature({
+      geometry: new Point(busCoord)
+    });
+    greenDevBusFeature.setStyle(new Style({ 
+      image: new Icon({
+       src: busIcon
+     })}));
+     greenDevBusFeature.setProperties({"entity": entity,
+      "busId": busId || '',
+      "nextStop": nextStop || '',
+      "capacity": capacity || '',
+    });
+
+    // somewhere here flush the features on BusSource
+    BusSource.addFeature(greenDevBusFeature);
+  })
+  .then(fetch('the api call for the GET shard iterator' + nextIterator, {mode: 'cors'})
+  .then(function(response) {
+    // update the next iterator
+    nextIterator = response;
+  }));
+}
+
+function testAPICall() {
+  fetch('https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/streams/dev_greenRouteStream/records', {
+	mode: 'cors',
+	headers: {
+		"Shard-Iterator": nextIterator
+	}
+})
+  .then(response => response.json())
+  .then(data => console.log(data));
+}
 fetchBusStops();
 fetchBusTravelData();
+// setTimeout(devgreenBusAPI, 2000);
+console.warn("initiating API call");
+testAPICall();
 
 // setInterval(function() {
 //   if(overlay.getPosition()) overlay.setPosition(r);
