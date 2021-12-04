@@ -10,36 +10,21 @@
 # ==================================
 
 import json
-from boto3 import kinesis
+import boto3
+# import botocore.config
+import uuid
+# from boto3 import kinesis
 
 def lambda_handler(event, context):
     
-    REGION = 'us-east-2'
-    kinesis_client = kinesis.connect_to_region(REGION)
-
-    kinesis_client.put_record(
-        "dev_greenRouteStream",
-        json.dumps(event['reported']),
-        "102"
-    )
+    # init kinesis client
+    kinesis_client = boto3.client('kinesis')
     
-    # dynamodb = boto3.resource('dynamodb', region_name = REGION)
-    # table = dynamodb.Table('intellibus_testMQTT')
-    # # test event info
-    # response = table.put_item(
-    #     Item ={
-    #         'deviceID': int(event['reported']['deviceID']),
-    #         'timestamp':  int(event['reported']['timestamp']),
-    #         'message': "Test Trigger from Lambda"
-    #     }
+    response = kinesis_client.put_record(
+        StreamName = 'dev_greenRouteStream',
+        Data = json.dumps(event['reported']),
+        PartitionKey = '102'
+        )
         
-    #     # Item ={
-    #     #     'deviceID': 102,
-    #     #     'timestamp':  1637690214943,
-    #     #     'message': "Test Trigger from Lambda"
-    #     # }
-    # )
-
-
-
-    
+    # if stop_move is true, then store in raw data in DB
+    # if(event['reported']['stop_move'])

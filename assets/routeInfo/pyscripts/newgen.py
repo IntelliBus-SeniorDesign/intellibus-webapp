@@ -68,8 +68,19 @@ for ii in range(3,len(red_route_raw)):
     # use function generator and find index
     stop_pos = next((thing for thing in stopID if thing['stopID'] == stop), None)
 
-    item = table.put_item(
-        Item = {
+    # item = table.put_item(
+    #     Item = {
+    #     'routeID': str(6217),
+    #     'routeName': route_name,
+    #     'position' : position,
+    #     'stopID' : stop,
+    #     'latitude': stop_pos['data'][0],
+    #     'longitude' : stop_pos['data'][1],
+    #     'stopName': stop_pos['data'][2],
+    #     'radius': stop_pos['data'][4]
+    #     }
+    # )
+    item = {
         'routeID': str(6217),
         'routeName': route_name,
         'position' : position,
@@ -79,7 +90,7 @@ for ii in range(3,len(red_route_raw)):
         'stopName': stop_pos['data'][2],
         'radius': stop_pos['data'][4]
         }
-    )
+    print(item)
 
 for ii in range(3,len(green_route_raw)):
     # use function generator and find index
@@ -98,18 +109,18 @@ for ii in range(3,len(green_route_raw)):
     #     'stopName': stop_pos['data'][2],
     #     'radius': stop_pos['data'][4]
     # }
-    item = table.put_item(
-        Item = {
-        'routeID': '6214',
-        'routeName': route_name,
-        'position' : position,
-        'stopID' : stop,
-        'latitude': stop_pos['data'][0],
-        'longitude' : stop_pos['data'][1],
-        'stopName': stop_pos['data'][2],
-        'radius': stop_pos['data'][4]
-    }
-    )
+    # item = table.put_item(
+    #     Item = {
+    #     'routeID': '6214',
+    #     'routeName': route_name,
+    #     'position' : position,
+    #     'stopID' : stop,
+    #     'latitude': stop_pos['data'][0],
+    #     'longitude' : stop_pos['data'][1],
+    #     'stopName': stop_pos['data'][2],
+    #     'radius': stop_pos['data'][4]
+    # }
+    # )
 
 routesJson.close()
 stopsJson.close()

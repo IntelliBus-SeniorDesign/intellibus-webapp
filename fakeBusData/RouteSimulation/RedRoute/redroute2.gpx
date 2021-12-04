@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx version="1.1" creator="http://www.geoplaner.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<rte>
+<name>Route1</name>
+<rtept lat="33.77137" lon="-84.39203">
+<name>WP01-A</name>
+</rtept>
+<rtept lat="33.7713" lon="-84.39206">
+<name>WP02-B</name>
+</rtept>
+<rtept lat="33.7712" lon="-84.39209">
+<name>WP03-C</name>
+</rtept>
+<rtept lat="33.77112" lon="-84.3921">
+<name>WP04-D</name>
+</rtept>
+<rtept lat="33.77107" lon="-84.39212">
+<name>WP05-E</name>
+</rtept>
+<rtept lat="33.77099" lon="-84.39214">
+<name>WP06-F</name>
+</rtept>
+<rtept lat="33.77093" lon="-84.39214">
+<name>WP07-G</name>
+</rtept>
+<rtept lat="33.77085" lon="-84.39216">
+<name>WP08-H</name>
+</rtept>
+<rtept lat="33.77078" lon="-84.39216">
+<name>WP09-I</name>
+</rtept>
+<rtept lat="33.7707" lon="-84.39216">
+<name>WP10-J</name>
+</rtept>
+<rtept lat="33.77064" lon="-84.39217">
+<name>WP11-K</name>
+</rtept>
+<rtept lat="33.77057" lon="-84.39217">
+<name>WP12-L</name>
+</rtept>
+<rtept lat="33.77049" lon="-84.39216">
+<name>WP13-M</name>
+</rtept>
+<rtept lat="33.77041" lon="-84.39217">
+<name>WP14-N</name>
+</rtept>
+<rtept lat="33.77032" lon="-84.39217">
+<name>WP15-O</name>
+</rtept>
+<rtept lat="33.77026" lon="-84.39217">
+<name>WP16-P</name>
+</rtept>
+<rtept lat="33.77019" lon="-84.39217">
+<name>WP17-Q</name>
+</rtept>
+<rtept lat="33.77012" lon="-84.39218">
+<name>WP18-R</name>
+</rtept>
+<rtept lat="33.77007" lon="-84.39218">
+<name>WP19-S</name>
+</rtept>
+<rtept lat="33.77" lon="-84.39218">
+<name>WP20-T</name>
+</rtept>
+<rtept lat="33.76995" lon="-84.39219">
+<name>WP21-U</name>
+</rtept>
+<rtept lat="33.76994" lon="-84.39213">
+<name>WP22-V</name>
+</rtept>
+<rtept lat="33.76995" lon="-84.392">
+<name>WP23-W</name>
+</rtept>
+<rtept lat="33.76995" lon="-84.39185">
+<name>WP24-X</name>
+</rtept>
+</rte>
+</gpx>
