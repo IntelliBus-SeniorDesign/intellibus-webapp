@@ -21,18 +21,18 @@ import random
 
 
 # import green route fake GPS data
-import greenRouteData as ext
+import redRouteData as ext
 
 
 AllowedActions = ['both', 'publish', 'subscribe']
 
 host = 'afvi82z02r2mg-ats.iot.us-east-2.amazonaws.com'
-rootCAPath = 'certs_and_keys/greenRoute/root-CA.crt'
-certificatePath = 'certs_and_keys/greenRoute/dev_mockAPC.cert.pem'
-privateKeyPath = 'certs_and_keys/greenRoute/dev_mockAPC.private.key'
+rootCAPath = 'certs_and_keys/redRoute/root-CA.crt'
+certificatePath = 'certs_and_keys/redRoute/dev_mockAPCRed.cert.pem'
+privateKeyPath = 'certs_and_keys/redRoute/dev_mockAPCRed.private.key'
 useWebsocket = False
 clientId = 'basicPubSub'
-topic = 'devmockAPCGreen/data'
+topic = 'devmockAPCRed/data'
 
 # Port defaults
 if useWebsocket:  # When no port override for WebSocket, default to 443
@@ -79,7 +79,7 @@ total_passengers = random.randint(2,10)
 
 
 # send GPS data using MQTT to broker
-for item in ext.greenRoute:
+for item in ext.redRoute:
     # if item has stop in wp name, random generate the passenger ingress/egress
     ingress = 0
     egress = 0
@@ -130,7 +130,7 @@ for item in ext.greenRoute:
     else:
         # build payload
         messageJson = {}
-        messageJson['deviceID'] = 101
+        messageJson['deviceID'] = 104
         now = datetime.datetime.utcnow()
         messageJson['timestamp'] = int(time.time())
         messageJson['coordinate'] = [item['lat'], item['lon']] 
