@@ -637,7 +637,7 @@ selectClick.on('select', function(e) {
   else {
     selectedFeatures.forEach(function(feature) {
       let props = feature.getProperties();
-      console.log(props);
+     // console.log(props);
 
       // Display the Overlay at the feature location
       let coordinate = feature.getGeometry().getCoordinates();
@@ -676,7 +676,7 @@ function fetchBusStops() {
     return response.json();
   })
   .then(function(json){
-    console.log(json.body);
+    //console.log(json.body);
     // Retrieve each feature in the database
     json.body.forEach(function(feature){
       // Pull properties from the bus stop feature
@@ -760,7 +760,7 @@ function fetchBusTravelData() {
     return response.json();
   })
   .then(function(json){
-    console.log('Test Green Route Data', json.body);
+    //console.log('Test Green Route Data', json.body);
 
     /**
      * 
@@ -870,7 +870,7 @@ async function getAPCRecords() {
       }});
       // convert response to a readable format
       green_response = await green_response.json();
-      console.log('GET Green records', green_response);
+     // console.log('GET Green records', green_response);
 
     // Now evaluate if the response has an empty record or not
     if (green_response) {
@@ -883,7 +883,7 @@ async function getAPCRecords() {
         
         // Convert the response to something meaningful
         let decoded = JSON.parse(atob(data));
-        console.warn('record obtained for green', decoded);
+        //console.warn('record obtained for green', decoded);
 
         // Create a new feature if not exist, else update its information
         if (!greenDevBusFeature) {
@@ -957,7 +957,7 @@ async function getAPCRecords() {
       }});
       // convert response to a readable format
       red_response = await red_response.json();
-      console.log('GET Red records', red_response);
+      //console.log('GET Red records', red_response);
 
     // Now evaluate if the response has an empty record or not
     if (red_response) {
@@ -970,7 +970,7 @@ async function getAPCRecords() {
         
         // Convert the response to something meaningful
         let decoded = JSON.parse(atob(data));
-        console.warn('record obtained for red', decoded);
+       // console.warn('record obtained for red', decoded);
 
         // Create a new feature if not exist, else update its information
         if (!redDevBusFeature) {
@@ -1044,7 +1044,7 @@ async function getAPCRecords() {
       }});
       // convert response to a readable format
       apc_response = await apc_response.json();
-      console.log('GET apc records', apc_response);
+     // console.log('GET apc records', apc_response);
 
     // Now evaluate if the response has an empty record or not
     if (apc_response) {
@@ -1057,7 +1057,7 @@ async function getAPCRecords() {
         
         // Convert the response to something meaningful
         let decoded = JSON.parse(atob(data));
-        console.warn('record obtained for apc', decoded);
+       // console.warn('record obtained for apc', decoded);
 
         // Create a new feature if not exist, else update its information
         if (!apcDevBusFeature) {
@@ -1134,7 +1134,7 @@ fetchBusTravelData();
   let isInitialized = await initializeShardIterators();
 
   if (isInitialized) {
-    console.warn('Shards initialized. Let\'s hope nothing breaks', isInitialized);
+  //  console.warn('Shards initialized. Let\'s hope nothing breaks', isInitialized);
     getAPCRecords();
   }
 })();
