@@ -220,3 +220,7 @@ window.onload = (event) => {
     testconfig
   );
 };
+
+fetch("https://kdij4yod85.execute-api.us-east-2.amazonaws.com/dev/deviceinfo")
+.then (response => response.json)
+.then (data => console.log(data))
