@@ -786,7 +786,7 @@ function fetchBusTravelData() {
        "capacity": capacity || '',
        "ETA": ETA || '',
      });
-     BusSource.addFeature(testBusFeature);
+     //BusSource.addFeature(testBusFeature);
      
     let promise = Promise.resolve();
     // Handle each green bus route
@@ -920,14 +920,7 @@ async function getAPCRecords() {
           let nextStop = decoded.wp_name;
           let capacity = decoded.total_passengers;
           let busCoord = fromLonLat([decoded.coordinate[1], decoded.coordinate[0]]);
-          let status = function() {
-            if (decoded.stop_move) {
-              return 'Loading passengers';
-            }
-            else {
-              return 'Moving';
-            }
-          }
+          let status = decoded.stop_move ? 'Loading passengers' : 'Moving';
           greenDevBusFeature.getGeometry().setCoordinates(busCoord);
             
         
@@ -987,14 +980,14 @@ async function getAPCRecords() {
           let capacity = decoded.total_passengers;
           let busCoord = fromLonLat([decoded.coordinate[1], decoded.coordinate[0]]);
           let status = decoded.stop_move ? 'Loading passengers' : 'Moving';
-          greenDevBusFeature = new Feature({
+          redDevBusFeature = new Feature({
             geometry: new Point(busCoord)
           });
-          greenDevBusFeature.setStyle(new Style({ 
+          redDevBusFeature.setStyle(new Style({ 
             image: new Icon({
             src: busIcon
           })}));
-          greenDevBusFeature.setProperties({
+          redDevBusFeature.setProperties({
             "entity": entity,
             "busId": busId || '',
             "nextStop": nextStop || '',
@@ -1014,21 +1007,14 @@ async function getAPCRecords() {
           let nextStop = decoded.wp_name;
           let capacity = decoded.total_passengers;
           let busCoord = fromLonLat([decoded.coordinate[1], decoded.coordinate[0]]);
-          let status = function() {
-            if (decoded.stop_move) {
-              return 'Loading passengers';
-            }
-            else {
-              return 'Moving';
-            }
-          }
-          greenDevBusFeature.getGeometry().setCoordinates(busCoord);
+          let status = decoded.stop_move ? 'Loading passengers' : 'Moving';
+          redDevBusFeature.getGeometry().setCoordinates(busCoord);
             
         
           // reset the HUD overlay if focused on the bus
         if(overlay.getPosition() && header.innerHTML.includes("BUS " + busId)) overlay.setPosition(busCoord);
 
-          greenDevBusFeature.setProperties({
+          redDevBusFeature.setProperties({
             "entity": entity,
             "busId": busId || '',
             "nextStop": nextStop || '',
@@ -1081,14 +1067,14 @@ async function getAPCRecords() {
           let capacity = decoded.total_passengers;
           let busCoord = fromLonLat([decoded.coordinate[1], decoded.coordinate[0]]);
           let status = decoded.stop_move ? 'Loading passengers' : 'Moving';
-          greenDevBusFeature = new Feature({
+          apcDevBusFeature = new Feature({
             geometry: new Point(busCoord)
           });
-          greenDevBusFeature.setStyle(new Style({ 
+          apcDevBusFeature.setStyle(new Style({ 
             image: new Icon({
             src: busIcon
           })}));
-          greenDevBusFeature.setProperties({
+          apcDevBusFeature.setProperties({
             "entity": entity,
             "busId": busId || '',
             "nextStop": nextStop || '',
@@ -1108,21 +1094,14 @@ async function getAPCRecords() {
           let nextStop = decoded.wp_name;
           let capacity = decoded.total_passengers;
           let busCoord = fromLonLat([decoded.coordinate[1], decoded.coordinate[0]]);
-          let status = function() {
-            if (decoded.stop_move) {
-              return 'Loading passengers';
-            }
-            else {
-              return 'Moving';
-            }
-          }
-          greenDevBusFeature.getGeometry().setCoordinates(busCoord);
+          let status = decoded.stop_move ? 'Loading passengers' : 'Moving';
+          apcDevBusFeature.getGeometry().setCoordinates(busCoord);
             
         
           // reset the HUD overlay if focused on the bus
         if(overlay.getPosition() && header.innerHTML.includes("BUS " + busId)) overlay.setPosition(busCoord);
 
-          greenDevBusFeature.setProperties({
+        apcDevBusFeature.setProperties({
             "entity": entity,
             "busId": busId || '',
             "nextStop": nextStop || '',
